@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Products {
+  id            String        @id @default(cuid())
+  name          String
+  price         Int
+  basePrice     Int
+  quantity      Int
+  imagePath     String?
+  description   String?
+  code          String
+  categories    Categories    @relation(fields: [categoryId], references: [id])
+  categoryId    String
+  subCategories SubCategories @relation(fields: [subCategoryId], references: [id])
+  subCategoryId String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now())
+}
+
+model Categories {
+  id            String          @id @default(cuid())
+  name          String
+  value         String
+  code          String
+  imagePath     String?
+  description   String?
+  products      Products[]
+  subCategories SubCategories[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+}
+
+model SubCategories {
+  id          String     @id @default(cuid())
+  name        String
+  value       String
+  code        String
+  imagePath   String?
+  description String?
+  categories  Categories @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  products    Products[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+}
